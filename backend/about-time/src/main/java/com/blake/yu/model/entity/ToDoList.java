@@ -1,4 +1,4 @@
-package com.blake.yu.model;
+package com.blake.yu.model.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,8 +14,8 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "diary")
-public class Diary implements Serializable {
+@Table(name = "to_do_list")
+public class ToDoList implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -25,18 +25,20 @@ public class Diary implements Serializable {
 
     private String title;
 
-    private String content;
-
-    @Column(name = "mood_score")
-    private byte moodScore;
+    private String description;
 
     @Column(name = "created_at")
     private Timestamp createdAt;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "created_by")
-    private Account createdBy;
+    @Column(name = "modified_at")
+    private Timestamp modifiedAt;
+
+    @Column(name = "is_completed")
+    private boolean isCompleted;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private Calender calender;
+    private VisitedType visitedType;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Couple couple;
 }

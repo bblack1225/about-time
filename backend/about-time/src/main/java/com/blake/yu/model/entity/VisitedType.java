@@ -1,9 +1,6 @@
-package com.blake.yu.model;
+package com.blake.yu.model.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -14,8 +11,8 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "city")
-public class City implements Serializable {
+@Table(name = "visited_type")
+public class VisitedType implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -23,8 +20,15 @@ public class City implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    private String city;
+    private String name;
 
     @Column(name = "created_at")
     private Timestamp createdAt;
+
+    @Column(name = "modified_at")
+    private Timestamp modifiedAt;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "created_couple_id")
+    private Couple couple;
 }

@@ -1,4 +1,4 @@
-package com.blake.yu.model;
+package com.blake.yu.model.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,8 +14,8 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "note")
-public class Note implements Serializable {
+@Table(name = "city")
+public class City implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -23,21 +23,8 @@ public class Note implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    private String title;
-
-    private String content;
+    private String city;
 
     @Column(name = "created_at")
     private Timestamp createdAt;
-
-    @Column(name = "modified_at")
-    private Timestamp modifiedAt;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "created_by")
-    private Account createdBy;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "modified_by")
-    private Account modifiedBy;
 }

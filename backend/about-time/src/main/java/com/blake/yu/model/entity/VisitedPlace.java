@@ -1,4 +1,4 @@
-package com.blake.yu.model;
+package com.blake.yu.model.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,14 +9,15 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.List;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "visited_record")
-public class VisitedRecord implements Serializable {
+@Table(name = "visited_place")
+public class VisitedPlace implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -24,20 +25,26 @@ public class VisitedRecord implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "visited_date")
-    private Date visitedDate;
+    private String name;
+
+    @Column(name = "first_visited_date")
+    private Date firstVisitedDate;
+
+    @Column(name = "last_visited_date")
+    private Date lastVisitedDate;
 
     @Column(name = "created_at")
     private Timestamp createdAt;
 
-    private byte rate;
-
-    @Column(name = "would_want_to_return_visit")
-    private boolean wouldWantToReturnVisit;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private VisitedType visitedType;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private VisitedPlace visitedPlace;
+    private City city;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Couple couple;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "visitedPlace")
+    private List<VisitedRecord> visitedRecordList;
 }

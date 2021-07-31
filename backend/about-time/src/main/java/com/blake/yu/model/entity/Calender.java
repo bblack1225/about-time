@@ -1,4 +1,4 @@
-package com.blake.yu.model;
+package com.blake.yu.model.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
