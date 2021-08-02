@@ -1,9 +1,8 @@
 package com.blake.yu.model.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.blake.yu.model.request.CreateAccountRequest;
+import com.blake.yu.util.DateUtils;
+import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -42,10 +41,10 @@ public class Account implements Serializable {
     @Column(name = "is_enable")
     private boolean isEnable;
 
-    @Column(name = "created_at")
+    @Column(name = "created_at", updatable = false, insertable = false)
     private Timestamp createdAt;
 
-    @Column(name = "modified_at")
+    @Column(name = "modified_at", updatable = false, insertable = false)
     private Timestamp modifiedAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -57,4 +56,14 @@ public class Account implements Serializable {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "createdBy")
     private List<Note> createNoteList;
 
+    @SneakyThrows
+    public Account(CreateAccountRequest request) {
+        Date birthDate = DateUtils.parse(request.getBirthDate());
+        this.name = request.getName();
+        this.email = request.getEmail();
+        this.password = request.getPassword();
+        this.gender = request.getGender();
+        this.birthDate = birthDate;
+        this.isEnable = true;
+    }
 }
