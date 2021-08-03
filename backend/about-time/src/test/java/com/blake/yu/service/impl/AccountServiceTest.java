@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.text.ParseException;
@@ -65,11 +66,11 @@ class AccountServiceTest {
                         .birthDate(birthdateStr)
                         .build();
 
-        when(accountRepository.save(actualAccount)).thenReturn(actualAccount);
+        when(accountRepository.save(Mockito.any(Account.class))).thenReturn(actualAccount);
 
         CreateAccountResponse actualResponse = accountService.createAccount(createAccountRequest);
 
-//        verify(accountRepository, times(1)).save(any());
-        assertThat(expectedResponse.getId()).isEqualTo(actualResponse.getId());
+        verify(accountRepository, times(1)).save(any());
+        assertThat(actualResponse.getId()).isEqualTo(expectedResponse.getId());
     }
 }

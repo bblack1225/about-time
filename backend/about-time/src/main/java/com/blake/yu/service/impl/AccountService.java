@@ -45,7 +45,7 @@ public class AccountService implements IAccountService, UserDetailsService {
         }
 
         Account account = new Account(request);
-        accountRepository.save(account);
+        account = accountRepository.save(account);
         return new CreateAccountResponse(account);
     }
 }
