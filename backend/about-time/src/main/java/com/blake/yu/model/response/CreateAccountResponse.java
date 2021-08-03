@@ -3,15 +3,14 @@ package com.blake.yu.model.response;
 import com.blake.yu.model.entity.Account;
 import com.blake.yu.util.DateUtils;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
-import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class CreateAccountResponse {
 
     @JsonProperty("id")
