@@ -62,7 +62,6 @@ public class Account implements Serializable {
         Date birthDate = DateUtils.parse(request.getBirthDate());
         this.name = request.getName();
         this.email = request.getEmail();
-        this.password = request.getPassword();
         this.gender = request.getGender();
         this.birthDate = birthDate;
         this.isEnable = true;

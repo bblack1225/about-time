@@ -7,11 +7,17 @@ import com.blake.yu.model.request.CreateAccountRequest;
 import com.blake.yu.model.response.CreateAccountResponse;
 import com.blake.yu.service.IAccountService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -19,6 +25,7 @@ import java.util.Optional;
 public class AccountService implements IAccountService, UserDetailsService {
 
     private final IAccountRepository accountRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -28,11 +35,13 @@ public class AccountService implements IAccountService, UserDetailsService {
         }
 
         Account account = optionalAccount.get();
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority("USER"));
 
         return new User(
                 account.getEmail(),
                 account.getPassword(),
-                null);
+                authorities);
     }
 
     @Override
@@ -45,6 +54,8 @@ public class AccountService implements IAccountService, UserDetailsService {
         }
 
         Account account = new Account(request);
+        String hashedPassword = passwordEncoder.encode(request.getPassword());
+        account.setPassword(hashedPassword);
         account = accountRepository.save(account);
         return new CreateAccountResponse(account);
     }
