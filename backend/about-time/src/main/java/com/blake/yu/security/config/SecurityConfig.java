@@ -1,6 +1,7 @@
 package com.blake.yu.security.config;
 
 import com.blake.yu.security.filter.CustomAuthenticationFilter;
+import com.blake.yu.security.handler.LoginSuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,6 +21,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final UserDetailsService userDetailsService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final LoginSuccessHandler loginSuccessHandler;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -29,13 +31,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManagerBean());
-        customAuthenticationFilter.setFilterProcessesUrl("/login");
-         http.csrf().disable();
+        http.csrf().disable();
          http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.authorizeRequests().antMatchers("/login").permitAll();
          http.authorizeRequests().anyRequest().authenticated();
-         http.addFilter(customAuthenticationFilter);
+         http.addFilter(customAuthenticationFilter());
+    }
+
+    @Bean
+    public CustomAuthenticationFilter customAuthenticationFilter() throws Exception {
+        CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter();
+        customAuthenticationFilter.setFilterProcessesUrl("/login");
+        customAuthenticationFilter.setAuthenticationSuccessHandler(loginSuccessHandler);
+        customAuthenticationFilter.setAuthenticationManager(authenticationManagerBean());
+        return customAuthenticationFilter;
     }
 
     @Bean

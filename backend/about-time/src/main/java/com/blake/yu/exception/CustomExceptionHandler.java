@@ -12,4 +12,9 @@ public class CustomExceptionHandler {
     public ResponseEntity<String> createUserException(Exception e){
         return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(value = AccountNotFoundException.class)
+    public ResponseEntity<String> accountNotFoundException(Exception e){
+        return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
+    }
 }

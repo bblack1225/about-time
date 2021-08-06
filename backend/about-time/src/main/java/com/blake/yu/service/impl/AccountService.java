@@ -1,9 +1,11 @@
 package com.blake.yu.service.impl;
 
 import com.blake.yu.dao.repository.IAccountRepository;
+import com.blake.yu.exception.AccountNotFoundException;
 import com.blake.yu.exception.CreateAccountException;
 import com.blake.yu.model.entity.Account;
 import com.blake.yu.model.request.CreateAccountRequest;
+import com.blake.yu.model.response.AccountLoginResponse;
 import com.blake.yu.model.response.CreateAccountResponse;
 import com.blake.yu.service.IAccountService;
 import lombok.RequiredArgsConstructor;
@@ -58,5 +60,16 @@ public class AccountService implements IAccountService, UserDetailsService {
         account.setPassword(hashedPassword);
         account = accountRepository.save(account);
         return new CreateAccountResponse(account);
+    }
+
+    @Override
+    public AccountLoginResponse getLoginResponseByEmail(String email) {
+        Optional<Account> optionalAccount = accountRepository.findByEmail(email);
+        if(optionalAccount.isEmpty()){
+            throw new AccountNotFoundException("User email is not exist");
+        }
+        Account account = optionalAccount.get();
+        AccountLoginResponse test = new AccountLoginResponse(account);
+        return test;
     }
 }
