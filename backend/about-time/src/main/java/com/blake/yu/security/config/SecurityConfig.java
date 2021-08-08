@@ -1,6 +1,9 @@
 package com.blake.yu.security.config;
 
+import com.blake.yu.security.UnAuthenticatedEntryPoint;
 import com.blake.yu.security.filter.CustomAuthenticationFilter;
+import com.blake.yu.security.filter.CustomAuthorizationFilter;
+import com.blake.yu.security.handler.LoginFailHandler;
 import com.blake.yu.security.handler.LoginSuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -13,6 +16,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -22,6 +26,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final UserDetailsService userDetailsService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final LoginSuccessHandler loginSuccessHandler;
+    private final LoginFailHandler loginFailHandler;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -31,11 +36,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable();
-         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        http.csrf().disable()
+                .addFilterBefore(customAuthorizationFilter(),UsernamePasswordAuthenticationFilter.class)
+                .addFilterAt(customAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling()
+                .authenticationEntryPoint(unAuthenticatedEntryPoint()).and()
+        .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.authorizeRequests().antMatchers("/login").permitAll();
          http.authorizeRequests().anyRequest().authenticated();
-         http.addFilter(customAuthenticationFilter());
     }
 
     @Bean
@@ -43,8 +51,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter();
         customAuthenticationFilter.setFilterProcessesUrl("/login");
         customAuthenticationFilter.setAuthenticationSuccessHandler(loginSuccessHandler);
+        customAuthenticationFilter.setAuthenticationFailureHandler(loginFailHandler);
         customAuthenticationFilter.setAuthenticationManager(authenticationManagerBean());
         return customAuthenticationFilter;
+    }
+
+    @Bean
+    public CustomAuthorizationFilter customAuthorizationFilter(){
+        return new CustomAuthorizationFilter();
+    }
+
+    @Bean
+    public UnAuthenticatedEntryPoint unAuthenticatedEntryPoint(){
+        return new UnAuthenticatedEntryPoint();
     }
 
     @Bean
