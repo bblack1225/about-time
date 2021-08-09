@@ -14,6 +14,7 @@ import java.io.IOException;
 public class LoginFailHandler implements AuthenticationFailureHandler {
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException e) throws IOException, ServletException {
-        response.sendError(HttpServletResponse.SC_UNAUTHORIZED,"Username or password invalid!");
+        response.sendError(HttpServletResponse.SC_BAD_REQUEST,"Username or password invalid!");
+
     }
 }

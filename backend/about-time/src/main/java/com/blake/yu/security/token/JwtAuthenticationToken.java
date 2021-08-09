@@ -8,15 +8,15 @@ import java.util.Collection;
 public class JwtAuthenticationToken extends AbstractAuthenticationToken {
     private static final long serialVersionUID = 1L;
     private final Object principal;
-    private Object credentials;
+    private String credentials;
 
-    public JwtAuthenticationToken(Object principal, Object credentials) {
+    public JwtAuthenticationToken(Object principal, String credentials) {
         super(null);
         this.principal = principal;
         this.credentials = credentials;
     }
 
-    public JwtAuthenticationToken(Object principal, Object credentials,
+    public JwtAuthenticationToken(Object principal, String credentials,
                                   Collection<? extends GrantedAuthority> authorities) {
         super(authorities);
         this.principal = principal;
@@ -24,7 +24,7 @@ public class JwtAuthenticationToken extends AbstractAuthenticationToken {
         super.setAuthenticated(true); // must use super, as we override
     }
 
-    public JwtAuthenticationToken(Object principal, Object credentials,
+    public JwtAuthenticationToken(Object principal, String credentials,
                                   Collection<? extends GrantedAuthority> authorities, Object detail) {
         super(authorities);
         this.principal = principal;
@@ -34,7 +34,7 @@ public class JwtAuthenticationToken extends AbstractAuthenticationToken {
     }
 
     @Override
-    public Object getCredentials() {
+    public String getCredentials() {
         return this.credentials;
     }
 

@@ -5,9 +5,11 @@ import com.blake.yu.security.filter.CustomAuthenticationFilter;
 import com.blake.yu.security.filter.CustomAuthorizationFilter;
 import com.blake.yu.security.handler.LoginFailHandler;
 import com.blake.yu.security.handler.LoginSuccessHandler;
+import com.blake.yu.security.provider.JwtAuthenticationProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -27,23 +29,29 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final LoginSuccessHandler loginSuccessHandler;
     private final LoginFailHandler loginFailHandler;
+    private final UnAuthenticatedEntryPoint unAuthenticatedEntryPoint;
+    private final JwtAuthenticationProvider jwtAuthenticationProvider;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsService)
                 .passwordEncoder(bCryptPasswordEncoder);
+        auth.authenticationProvider(jwtAuthenticationProvider);
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
-                .addFilterBefore(customAuthorizationFilter(),UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(customAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .addFilterAt(customAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling()
-                .authenticationEntryPoint(unAuthenticatedEntryPoint()).and()
-        .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        http.authorizeRequests().antMatchers("/login").permitAll();
-         http.authorizeRequests().anyRequest().authenticated();
+                .authenticationEntryPoint(unAuthenticatedEntryPoint)
+                .and()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .authorizeRequests().antMatchers("/login").permitAll()
+                .antMatchers(HttpMethod.POST, "/account").permitAll()
+                .anyRequest().authenticated();
     }
 
     @Bean
@@ -59,11 +67,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public CustomAuthorizationFilter customAuthorizationFilter(){
         return new CustomAuthorizationFilter();
-    }
-
-    @Bean
-    public UnAuthenticatedEntryPoint unAuthenticatedEntryPoint(){
-        return new UnAuthenticatedEntryPoint();
     }
 
     @Bean
