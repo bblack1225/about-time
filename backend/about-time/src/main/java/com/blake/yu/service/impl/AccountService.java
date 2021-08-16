@@ -3,10 +3,13 @@ package com.blake.yu.service.impl;
 import com.blake.yu.dao.repository.IAccountRepository;
 import com.blake.yu.exception.AccountNotFoundException;
 import com.blake.yu.exception.CreateAccountException;
+import com.blake.yu.exception.InviteCodeNotFoundException;
 import com.blake.yu.model.entity.Account;
 import com.blake.yu.model.request.CreateAccountRequest;
+import com.blake.yu.model.request.CreateGroupRequest;
 import com.blake.yu.model.response.AccountLoginResponse;
 import com.blake.yu.model.response.CreateAccountResponse;
+import com.blake.yu.model.response.CreateGroupResponse;
 import com.blake.yu.service.IAccountService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -71,5 +74,15 @@ public class AccountService implements IAccountService, UserDetailsService {
         Account account = optionalAccount.get();
         AccountLoginResponse test = new AccountLoginResponse(account);
         return test;
+    }
+
+    @Override
+    public CreateGroupResponse createGroup(CreateGroupRequest request) {
+        Optional<Account> optionalAccount = accountRepository.queryByInviteCodeAndStatus(request.getInviteCode());
+        if(optionalAccount.isEmpty()){
+            throw new InviteCodeNotFoundException("Invite Code is not exist or can not join the group");
+        }
+
+        return null;
     }
 }
