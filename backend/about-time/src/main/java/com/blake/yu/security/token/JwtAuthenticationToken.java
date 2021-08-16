@@ -24,15 +24,6 @@ public class JwtAuthenticationToken extends AbstractAuthenticationToken {
         super.setAuthenticated(true); // must use super, as we override
     }
 
-    public JwtAuthenticationToken(Object principal, String credentials,
-                                  Collection<? extends GrantedAuthority> authorities, Object detail) {
-        super(authorities);
-        this.principal = principal;
-        this.credentials = credentials;
-        super.setDetails(detail);
-        super.setAuthenticated(true); // must use super, as we override
-    }
-
     @Override
     public String getCredentials() {
         return this.credentials;
